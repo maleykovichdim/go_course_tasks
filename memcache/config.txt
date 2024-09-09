@@ -1,0 +1,10 @@
+
+
+#main package
+
+#port for listen and serve
+ListenServePort = "8081"
+redisURL = "redis:6379"
+#redis DB connection params
+password = ""
+db = 0

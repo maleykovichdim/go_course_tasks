@@ -1,0 +1,61 @@
+#docker-compose up --build
+
+
+version: '3.8'
+
+services:
+  redis:
+    image: "redis:alpine"  # Use the Redis Alpine image for lightweight deployment
+    ports:
+      - "6379:6379"  # Exposes Redis on port 6379
+    volumes:
+      - redis_data:/data  # Persist Redis data across container restarts
+
+  postgres:
+    image: "postgres:latest"  # Use the latest PostgreSQL image
+    environment:
+      POSTGRES_USER: postgres  # Set the PostgreSQL user
+      POSTGRES_PASSWORD: postgress  # Set the PostgreSQL password
+      POSTGRES_DB: links  # Initial database to be created
+    ports:
+      - "5432:5432"  # Exposes PostgreSQL on port 5555 for accessing
+    volumes:
+      - pgdata:/var/lib/postgresql/data  # Persist PostgreSQL data across container restarts
+
+  memcache_service:
+    build:
+      context: .  # Path to the directory containing your Dockerfile
+      dockerfile: memcache/Dockerfile  # Assuming you have a Dockerfile in the root of the project
+    ports:
+      - "8081:8081"  # Exposes your Go service on port 8080
+    depends_on:
+      - redis  # Wait for Redis to start before starting the service
+      - postgres  # Wait for PostgreSQL to start
+
+
+  shortener_service:
+    build:
+      context: .
+      dockerfile: shortener/Dockerfile  # The Dockerfile for the Go service
+    ports:
+      - "8082:8080"  # Exposes the URL shortener service on port 8080
+    depends_on:
+      - redis  # Wait for Redis to start before starting the service
+      - postgres  # Wait for PostgreSQL to start
+      - memcache_service
+
+  prometheus:
+    image: "prom/prometheus"  # Using the official Prometheus image
+    ports:
+      - "9200:9090"  # Exposes Prometheus on port 9090 for access
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml  # Mount the Prometheus configuration file
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"  # Command to specify the config file
+    depends_on:
+      - redis  # Wait for Redis to start before starting the service
+
+
+volumes:
+  redis_data:  # Volume for Redis data persistence
+  pgdata:  # Volume for PostgreSQL data persistence

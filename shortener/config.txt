@@ -1,0 +1,28 @@
+
+#DB postress
+DBUser         = "postgres"
+DBPassword     = "postgress"
+#  DBHost        = "localhost"
+DBHost         = "postgres"
+DBPort         = "5432"
+DBName         = "links"
+DBNameStart   = "postgres"
+CtxTimeoutSec = 20
+
+# cache package
+#BaseCacheUrl = "http://localhost:8080"
+BaseCacheUrl    = "http://memcache_service:8081"
+
+#core package
+#SIZE OF SHORT code, MAX = 13 !!!
+sizeShortCode = 10
+# start pregeneration storage size
+pSize = 1024 
+# min allowed Number of pregenerated links when we have to request a new short codes
+pThreshold = 100
+
+#main package
+# first part for response with short code
+hostShortCode = "http://localhost:8082"
+#port for listen and serve
+ListenServePort = "8080"
