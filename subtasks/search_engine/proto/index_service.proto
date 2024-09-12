@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package indexpb;
+
+option go_package = "../pkg/crawler/indexpb";
+
+message Document {
+    uint32 id = 1;          
+    string url = 2;         
+    string title = 3;       
+    string body = 4;        
+}
+
+
+
+
+message Service {
+    uint32 counter = 1;               
+    repeated Document links = 2;
+    message MapFieldEntry {
+        repeated uint32 index = 1;
+    }          
+    
+    map<string, MapFieldEntry> index = 3; 
+}
+
+
+
+
+
+// protoc --go_out=. index_service.proto
